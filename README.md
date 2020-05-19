@@ -17,15 +17,6 @@ Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoi
 
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 
-## Basic Build Instructions
-
-1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./path_planning`.
-
-Here is the data provided from the Simulator to the C++ Program
-
 #### Main car's localization Data (No Noise)
 
 ["x"] The car's x position in map coordinates
@@ -57,7 +48,51 @@ the path has processed since last time.
 
 #### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
 
-["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
+["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates.
+
+### Evaluation of Sensor Fusion Data
+
+#### Close range evaluation
+The first goal is to gather information about the close sourrounding traffic given by the Sensor Fusion Data provided by the simulator.
+With this information crashes can be avoided succesfully.
+Following car flags are introduced and evaluated in each frame:
+'''
+//car flags
+bool too_close = false; // ego car is getting close to car in front
+bool emerg_close = false; // ego car is very close to car in front
+bool car_l_b = false; //Car left lane, behind ego
+bool car_l_f = false; //Car left lane, in front of ego
+bool car_r_b = false; //Car right lane, behind ego
+bool car_r_f = false; //Car right lane, in front of ego
+bool lane_change_active = false; //car is doing lane change or not
+'''
+To do so, each surrounding car's frenet coordinate is evaluated. Each car is assigned to its driving lane. Cars which are in a range of 27m ahead of the ego car are flagged as 'too_close', cars on the left lane, which are in a "unsafe range" in front or behind the ego car are flagged as well. The same happens with the right lane. The "unsafe range" is inversely proportional to the actual velocity of the ego car. The faster the ego car drives, the shorter the unsafe range is. The idea behind this is that when the ego car drives relatively slow, fast cars could approach from behind. To avoid crashes, the "unsafe range" has to be larger then when the ego car drives at 50 mph.
+
+#### Far range evaluation
+The second and more sophisticated goal is to evalute the traffic far ahead of the ego car to make smart lane decisions. To do so, I implemented a "Fast Lane Detector".
+All cars in a range of 300m to 50m in front of the ego car are evaluated. The slowest car of each lane sets the virtual speed limit of that lane. The lane with the highest virtual speed limit is flagged as 'fast_lane'.
+
+### Behavior Planning
+
+The behavior planner consists of different rules which evaluate the above mentioned flags and create approbiate behaviors for the car.
+The lane and speed are adjusted accordingly.
+
+#### Rules for crash avoidance
+1. If a car is very close in front and there are no cars on the left side, change lane to the left.
+2. If a car is very close in front and there are no cars on the right side, change lane to the right.
+3. If a car is very close in front and there are cars on the left or right side, emergency brake!.
+4. If a car is getting close in front there are cars on the left or right side, reduce own velocity to velocity of car in front.
+#### Rules for German Highway behavior
+One rule on german highways is too drive on the right lane as often as possible:
+5. If right lane is empty, change lange to the right.
+#### Rules to choose Fast Lane 
+6. If left lane is empty and left lane is declared as fast lane, change lane to the left.
+7. If right lane is empty and right lane is declared as fast lane, change lane to the right.
+8. Reducing speed if 'Fast_Lane' is blocked by slow cars on the middle lane. The chance to overtake the slow cars is increased by this maneuver.
+9. Accelerate in all other cases.
+
+
+ 
 
 ## Details
 
@@ -91,55 +126,4 @@ A really helpful resource for doing this project and creating smooth trajectorie
     cd uWebSockets
     git checkout e94b6e1
     ```
-
-## Editor Settings
-
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
-
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
-
-## Code Style
-
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
-
-## Project Instructions and Rubric
-
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
-
-
-## Call for IDE Profiles Pull Requests
-
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
