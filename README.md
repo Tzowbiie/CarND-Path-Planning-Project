@@ -20,15 +20,10 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 #### Main car's localization Data (No Noise)
 
 ["x"] The car's x position in map coordinates
-
 ["y"] The car's y position in map coordinates
-
 ["s"] The car's s position in frenet coordinates
-
 ["d"] The car's d position in frenet coordinates
-
 ["yaw"] The car's yaw angle in the map
-
 ["speed"] The car's speed in MPH
 
 #### Previous path data given to the Planner
@@ -37,18 +32,20 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 the path has processed since last time. 
 
 ["previous_path_x"] The previous list of x points previously given to the simulator
-
 ["previous_path_y"] The previous list of y points previously given to the simulator
 
 #### Previous path's end s and d values 
 
 ["end_path_s"] The previous list's last point's frenet s value
-
 ["end_path_d"] The previous list's last point's frenet d value
 
 #### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
 
 ["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates.
+
+---
+
+## Reflection
 
 ### Evaluation of Sensor Fusion Data
 
@@ -82,28 +79,35 @@ The lane and speed are adjusted accordingly.
 2. If a car is very close in front and there are no cars on the right side, change lane to the right.
 3. If a car is very close in front and there are cars on the left or right side, emergency brake!.
 4. If a car is getting close in front there are cars on the left or right side, reduce own velocity to velocity of car in front.
+
 #### Rules for German Highway behavior
 One rule on german highways is too drive on the right lane as often as possible:
 
 5. If right lane is empty, change lange to the right.
+
 #### Rules to choose Fast Lane 
 6. If left lane is empty and left lane is declared as fast lane, change lane to the left.
 7. If right lane is empty and right lane is declared as fast lane, change lane to the right.
 8. Reducing speed if 'Fast_Lane' is blocked by slow cars on the middle lane. The chance to overtake the slow cars is increased by this maneuver.
 9. Accelerate in all other cases.
 
+**At this point, the rest follows the [Udacity Self-driving car Q&A session.](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/27800789-bc8e-4adc-afe0-ec781e82ceae/lessons/23add5c6-7004-47ad-b169-49a5d7b1c1cb/concepts/3bdfeb8c-8dd6-49a7-9d08-beff6703792d) very closely. I will summarize it below:
 
- 
+1. With the lane and speed of the vehicle decided, the car creates a trajectory of 50 points to follow. The points are created by using the previous paths last two points, and then 3 additional points allong the road seperated by 30 m. [lines 339-397]
+
+2. The final waypoints take the remaining points from the last trajectory + new points created from a spline of the 5 aformentioned points. Note, that not necessarily all of the new points will be added. Points will only be added until there is a total of 50 points in the current cycle waypoint list. [lines 398-440]
+
+3. Path smoothing uses the spline library [spline.h](http://kluge.in-chemnitz.de/opensource/spline/).
+
+4. When creating the 5 points for the spline, I changed to fernet coordinates relative to the car's local reference frame for simplicity. I tranform back into a global cartesian reference frame in the end. [lines 388-397, 440-440]
+
+---
 
 ## Details
 
 1. The car uses a perfect controller and will visit every (x,y) point it recieves in the list every .02 seconds. The units for the (x,y) points are in meters and the spacing of the points determines the speed of the car. The vector going from a point to the next point in the list dictates the angle of the car. Acceleration both in the tangential and normal directions is measured along with the jerk, the rate of change of total Acceleration. The (x,y) point paths that the planner recieves should not have a total acceleration that goes over 10 m/s^2, also the jerk should not go over 50 m/s^3. (NOTE: As this is BETA, these requirements might change. Also currently jerk is over a .02 second interval, it would probably be better to average total acceleration over 1 second and measure jerk from that.
 
 2. There will be some latency between the simulator running and the path planner returning a path, with optimized code usually its not very long maybe just 1-3 time steps. During this delay the simulator will continue using points that it was last given, because of this its a good idea to store the last points you have used so you can have a smooth transition. previous_path_x, and previous_path_y can be helpful for this transition since they show the last points given to the simulator controller with the processed points already removed. You would either return a path that extends this previous path or make sure to create a new path that has a smooth transition with this last path.
-
-## Tips
-
-A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
 
 ---
 
