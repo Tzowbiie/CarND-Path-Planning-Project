@@ -109,6 +109,10 @@ One rule on german highways is too drive on the right lane as often as possible:
 
 4. When creating the 5 points for the spline, I changed to fernet coordinates relative to the car's local reference frame for simplicity. I tranform back into a global cartesian reference frame in the end. [lines 388-397, 440-440]
 
+### Conclusion
+
+With this approach the car reaches the goal to drive more than 4.5 miles without incident.
+![alt text](CarND-Path-Planning-Project/screenshot.JPG "Goal reached")
 ---
 
 ## Details
