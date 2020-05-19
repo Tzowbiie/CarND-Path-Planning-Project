@@ -20,10 +20,15 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 #### Main car's localization Data (No Noise)
 
 ["x"] The car's x position in map coordinates
+
 ["y"] The car's y position in map coordinates
+
 ["s"] The car's s position in frenet coordinates
+
 ["d"] The car's d position in frenet coordinates
+
 ["yaw"] The car's yaw angle in the map
+
 ["speed"] The car's speed in MPH
 
 #### Previous path data given to the Planner
@@ -32,11 +37,13 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 the path has processed since last time. 
 
 ["previous_path_x"] The previous list of x points previously given to the simulator
+
 ["previous_path_y"] The previous list of y points previously given to the simulator
 
 #### Previous path's end s and d values 
 
 ["end_path_s"] The previous list's last point's frenet s value
+
 ["end_path_d"] The previous list's last point's frenet d value
 
 #### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
