@@ -112,7 +112,9 @@ One rule on german highways is too drive on the right lane as often as possible:
 ### Conclusion
 
 With this approach the car reaches the goal to drive more than 4.5 miles without incident.
+
 ![alt text](https://github.com/Tzowbiie/CarND-Path-Planning-Project/blob/master/screenshot.JPG "Goal reached")
+
 ---
 
 ## Details
