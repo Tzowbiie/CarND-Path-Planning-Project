@@ -115,6 +115,7 @@ With this approach the car reaches the goal to drive more than 4.5 miles without
 
 ![alt text](https://github.com/Tzowbiie/CarND-Path-Planning-Project/blob/master/screenshot.JPG)
 
+![alt text](https://github.com/Tzowbiie/CarND-Path-Planning-Project/blob/master/Testdrive_small.gif)
 
 ---
 
