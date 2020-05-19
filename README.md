@@ -57,8 +57,9 @@ the path has processed since last time.
 ### Evaluation of Sensor Fusion Data
 
 #### Close range evaluation
-The first goal is to gather information about the close sourrounding traffic given by the Sensor Fusion Data provided by the simulator.
+The first goal is to gather information about the close sourrounding traffic (+-30m) given by the Sensor Fusion Data provided by the simulator.
 With this information crashes can be avoided succesfully.
+
 Following car flags are introduced and evaluated in each frame:
 ```
 //car flags
@@ -70,11 +71,11 @@ bool car_r_b = false; //Car right lane, behind ego
 bool car_r_f = false; //Car right lane, in front of ego
 bool lane_change_active = false; //car is doing lane change or not
 ```
-To do so, each surrounding car's frenet coordinates are evaluated. Each car is assigned to its driving lane. Cars which are in a range of 27m ahead of the ego car are flagged as 'too_close', cars on the left lane, which are in a "unsafe range" in front or behind the ego car are flagged as well. The same happens with the right lane. The "unsafe range" is inversely proportional to the actual velocity of the ego car. The faster the ego car drives, the shorter the unsafe range is. The idea behind this is that when the ego car drives relatively slow, fast cars could approach from behind. To avoid crashes, the "unsafe range" has to be larger then when the ego car drives at 50 mph.
+To do so, each surrounding car's frenet coordinates are evaluated. Each car is assigned to its driving lane. Cars which are in a range of 27m ahead of the ego car are flagged as `too_close`, cars on the left lane, which are in a "unsafe range" in front or behind the ego car are flagged as well. The same happens with the right lane. The "unsafe range" is inversely proportional to the actual velocity of the ego car. The faster the ego car drives, the shorter the unsafe range is. The idea behind this is that when the ego car drives relatively slow, fast cars could approach from behind. To avoid crashes, the "unsafe range" has to be larger then when the ego car drives at 50 mph.
 
 #### Far range evaluation
-The second and more sophisticated goal is to evalute the traffic far ahead of the ego car to make smart lane decisions. To do so, I implemented a "Fast Lane Detector".
-All cars in a range of 300m to 50m in front of the ego car are evaluated. The slowest car of each lane sets the virtual speed limit of that lane. The lane with the highest virtual speed limit is flagged as 'fast_lane'.
+The second and more sophisticated goal is to evalute the traffic far ahead of the ego car to make forward-looking lane change decisions. To do so, I implemented a "Fast Lane Detector".
+All cars in a range of 50m to 300m in front of the ego car are evaluated. The slowest car of each lane sets the virtual speed limit of that lane. The lane with the highest virtual speed limit is flagged as `fast_lane`.
 
 ### Behavior Planning
 
@@ -95,7 +96,7 @@ One rule on german highways is too drive on the right lane as often as possible:
 #### Rules to choose Fast Lane 
 6. If left lane is empty and left lane is declared as fast lane, change lane to the left.
 7. If right lane is empty and right lane is declared as fast lane, change lane to the right.
-8. Reducing speed if 'Fast_Lane' is blocked by slow cars on the middle lane. The chance to overtake the slow cars is increased by this maneuver.
+8. Reducing speed if `Fast_Lane` is blocked by slow cars on the middle lane. The chance to overtake the slow cars is increased by this maneuver.
 9. Accelerate in all other cases.
 
 **At this point, the rest follows the [Udacity Self-driving car Q&A session.](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/27800789-bc8e-4adc-afe0-ec781e82ceae/lessons/23add5c6-7004-47ad-b169-49a5d7b1c1cb/concepts/3bdfeb8c-8dd6-49a7-9d08-beff6703792d) very closely. I will summarize it below:
