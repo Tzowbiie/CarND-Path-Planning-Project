@@ -66,7 +66,7 @@ bool car_r_b = false; //Car right lane, behind ego
 bool car_r_f = false; //Car right lane, in front of ego
 bool lane_change_active = false; //car is doing lane change or not
 ```
-To do so, each surrounding car's frenet coordinate is evaluated. Each car is assigned to its driving lane. Cars which are in a range of 27m ahead of the ego car are flagged as 'too_close', cars on the left lane, which are in a "unsafe range" in front or behind the ego car are flagged as well. The same happens with the right lane. The "unsafe range" is inversely proportional to the actual velocity of the ego car. The faster the ego car drives, the shorter the unsafe range is. The idea behind this is that when the ego car drives relatively slow, fast cars could approach from behind. To avoid crashes, the "unsafe range" has to be larger then when the ego car drives at 50 mph.
+To do so, each surrounding car's frenet coordinates are evaluated. Each car is assigned to its driving lane. Cars which are in a range of 27m ahead of the ego car are flagged as 'too_close', cars on the left lane, which are in a "unsafe range" in front or behind the ego car are flagged as well. The same happens with the right lane. The "unsafe range" is inversely proportional to the actual velocity of the ego car. The faster the ego car drives, the shorter the unsafe range is. The idea behind this is that when the ego car drives relatively slow, fast cars could approach from behind. To avoid crashes, the "unsafe range" has to be larger then when the ego car drives at 50 mph.
 
 #### Far range evaluation
 The second and more sophisticated goal is to evalute the traffic far ahead of the ego car to make smart lane decisions. To do so, I implemented a "Fast Lane Detector".
