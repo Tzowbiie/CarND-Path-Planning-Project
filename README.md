@@ -118,8 +118,8 @@ With this approach the car reaches the goal to drive more than 4.5 miles without
 TEXT
 
 <figure class="video_container">
-  <video controls="true" allowfullscreen="true" poster="poster.JPG">
-    <source src="Testdrive_small.mp4" type="video/mp4">
+  <video controls="true" allowfullscreen="true" poster="/poster.JPG">
+    <source src="/Testdrive_small.mp4" type="video/mp4">
   </video>
 </figure>
 
