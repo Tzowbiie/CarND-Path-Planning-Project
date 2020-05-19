@@ -91,7 +91,7 @@ The lane and speed are adjusted accordingly.
 #### Rules for German Highway behavior
 One rule on german highways is too drive on the right lane as often as possible:
 
-5. If right lane is empty, change lange to the right.
+5. If right lane is empty, change lane to the right.
 
 #### Rules to choose Fast Lane 
 6. If left lane is empty and left lane is declared as fast lane, change lane to the left.
