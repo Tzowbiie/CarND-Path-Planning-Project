@@ -110,8 +110,8 @@ int main() {
             car_s=end_path_s;
           }
           //car flags
-          bool too_close = false;
-          bool emerg_close = false;
+          bool too_close = false; // ego car is getting close to car in front
+          bool emerg_close = false; // ego car is very close to car in front
           bool car_l_b = false; //Car left lane, behind ego
           bool car_l_f = false; //Car left lane, in front of ego
           bool car_r_b = false; //Car right lane, behind ego
@@ -122,7 +122,7 @@ int main() {
           // inverse ratio between max velocity and actual velocity between 0..1: 0 = car at max speed, 1 = car at 0 mph
           double vel_dist = 1-(ref_vel/49.5);
           //in which lane is the ego car at the moment
-          double lane_buff = 0.3; // car is 0.3 m smaller then lane
+          double lane_buff = 1;//0.3; // car is 0.3 m smaller then lane
           if( (car_d > 0) && (car_d < 4-lane_buff) ){
             car_lane = 0;}
           else if( (car_d > 4+lane_buff) && (car_d < 8-lane_buff) ){  
@@ -220,7 +220,7 @@ int main() {
             if(other_car_lane == 0)
             {
               //car far in front of ego car. if slower then lane_velocity set new lane velocity
-              if( (check_car_s >= car_s-car_length+50) && (check_car_s-car_s < 300) && (lane0_vel>check_speed*2.24) )
+              if( (check_car_s >= car_s-car_length+40) && (check_car_s-car_s < 300) && (lane0_vel>check_speed*2.24) )
               {
                 lane0_vel=check_speed*2.24;
               }
@@ -228,7 +228,7 @@ int main() {
             else if(other_car_lane == 1)
             {
               //car far in front of ego car and slower then own speed, set new lane0 speed
-              if( (check_car_s >= car_s-car_length+50) && (check_car_s-car_s) < 300 && (lane1_vel>check_speed*2.24) )
+              if( (check_car_s >= car_s-car_length+47) && (check_car_s-car_s) < 300 && (lane1_vel>check_speed*2.24) )
               {
                 lane1_vel=check_speed*2.24;
               }
@@ -236,7 +236,7 @@ int main() {
             else if(other_car_lane == 2)
             {
               //car far in front of ego car and slower then own speed, set new lane0 speed
-              if( (check_car_s >= car_s-car_length+50) && (check_car_s-car_s) < 300 && (lane2_vel>check_speed*2.24) )
+              if( (check_car_s >= car_s-car_length+47) && (check_car_s-car_s) < 300 && (lane2_vel>check_speed*2.24) )
                  {
                 lane2_vel=check_speed*2.24;
               }
@@ -269,7 +269,8 @@ int main() {
               std::cout<<" BREAKING HARD! "<<std::endl;
             }
           }       
-          else if((!car_r_f) && (!car_r_b) && (ref_vel > 27) && (!lane_change_active)) // if right lane is empty, change lane to the right
+          //German Highway rules!
+          else if((!car_r_f) && (!car_r_b) && (ref_vel > 27) && (!lane_change_active)) // if right lane is empty, change lane to the right 
           {
             if(car_lane == 1 && fast_lane == 2) //change to the right lane
             {
@@ -299,12 +300,12 @@ int main() {
             }
           }
           //changing lane to FAST_LANE if possible
-          if((!car_l_f) && (!car_l_b) && (car_lane > 0) && (!lane_change_active) && (fast_lane < car_lane) && (ref_vel > 27)) // no car on left lane, fast_lane on the left -->change lane to the left
+          if((!car_l_f) && (!car_l_b) && (car_lane > 0) && (!lane_change_active) && (fast_lane < lane) && (ref_vel > 27)) // no car on left lane, fast_lane on the left -->change lane to the left
           {
             lane--;
             std::cout<<" Lane change left to FL "<<car_l_b<<std::endl;
           }
-          else if((!car_r_f) && (!car_r_b) && (lane < 2) && (!lane_change_active) && (fast_lane > car_lane) && (ref_vel > 27)) // no car on right lane, fast_lane on the right--> change lane to the right
+          else if((!car_r_f) && (!car_r_b) && (car_lane < 2) && (!lane_change_active) && (fast_lane > lane) && (ref_vel > 27)) // no car on right lane, fast_lane on the right--> change lane to the right
           {
             lane++;
             std::cout<<" Lane change right to FL "<<std::endl;
